@@ -89,6 +89,8 @@ int main(int argc, char *argv[])
 
 2. Write a program that opens a file (with the `open()` system call) and then calls `fork()` to create a new process. Can both the child and parent access the file descriptor returned by `open()`? What happens when they are writing to the file concurrently, i.e., at the same time?
 
+   File descriptors are actually inherited across the fork() function, that means both the parent and child can write to the file using the same descriptor. That means both the parent and child can access the file. This also means that they can both open at the same time, though it would lead to the writes being interleaved and mixed output in the file.
+
 ```cpp
 #include <stdio.h>
 #include <stdlib.h>
@@ -134,6 +136,8 @@ main(int argc, char *argv[])
 
 3. Write another program using `fork()`.The child process should print “hello”; the parent process should print “goodbye”. You should try to ensure that the child process always prints first; can you do this without calling `wait()` in the parent?
 
+	We can make the child process print "hello" first by using sleep(1), which delays the parent's call, causing the child output to appear first.
+
 ```cpp
 #include <stdio.h>
 #include <stdlib.h>
@@ -166,6 +170,8 @@ main(int argc, char *argv[])
 
 
 4. Write a program that calls `fork()` and then calls some form of `exec()` to run the program `/bin/ls`. See if you can try all of the variants of `exec()`, including (on Linux) `execl()`, `execle()`, `execlp()`, `execv()`, `execvp()`, and `execvpe()`. Why do you think there are so many variants of the same basic call?
+
+There are so many variants of the exec call because there are multiple ways to pass the argument. It's for convenience as using the same exec for the many different calls would be messy, seperating it into different variants allows for clean code, as well as convenience and visibility as you know what call is being made.
 
 ```cpp
 #include <stdio.h>
@@ -200,6 +206,8 @@ main(int argc, char *argv[])
 ```
 
 5. Now write a program that uses `wait()` to wait for the child process to finish in the parent. What does `wait()` return? What happens if you use `wait()` in the child?
+
+wait() stalls or blocks the parent until the child finishes, as a result it will return the PID of the child that exited. Calling wait() in the child would draw an error as the child cannot have a child process of it's own to wait for.
 
 ```cpp
 #include <stdio.h>
@@ -236,6 +244,8 @@ main(int argc, char *argv[])
 
 6. Write a slight modification of the previous program, this time using `waitpid()` instead of `wait()`. When would `waitpid()` be useful?
 
+   waitpid() is useful as it provides more utility than wait() allowing the process to wait for a specific child PID, so when a parent has several children, it allows picking a specific child instead of waiting for every child.
+
 ```cpp
 #include <stdio.h>
 #include <stdlib.h>
@@ -265,6 +275,8 @@ main(int argc, char *argv[])
 ```
 
 7. Write a program that creates a child process, and then in the child closes standard output (`STDOUT FILENO`). What happens if the child calls `printf()` to print some output after closing the descriptor?
+
+   If the child call printf() to print after closing the descriptor will silently fail, producing no output. 
 
 ```cpp
 #include <stdio.h>
