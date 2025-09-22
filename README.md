@@ -50,6 +50,7 @@ Use the Linux in your CSE4001 container. If you are using macOS, you may use the
 ### Questions
 1. Write a program that calls `fork()`. Before calling `fork()`, have the main process access a variable (e.g., x) and set its value to something (e.g., 100). What value is the variable in the child process? What happens to the variable when both the child and parent change the value of x?
 
+Before we call the fork() function, X is 1, after fork() is called, both parent and it's child get a copy of x in seperated memory spaces. In this example I set X to 5 and the parent to X = 10, these changes are independent of eachother. Each process can modify their copy of x and would not be visible to each other.
 
 ```cpp
 #include <stdio.h>
@@ -81,7 +82,7 @@ int main(int argc, char *argv[])
     
 }
 
-Before we call the fork() function, X is 1, after fork() is called, both parent and it's child get a copy of x in seperated memory spaces. In this example I set X to 5 and the parent to X = 10, these changes are independent of eachother. Each process can modify their copy of x and would not be visible to each other.
+
 
 ```
 
