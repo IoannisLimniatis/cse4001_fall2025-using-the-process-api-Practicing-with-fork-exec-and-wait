@@ -50,7 +50,7 @@ Use the Linux in your CSE4001 container. If you are using macOS, you may use the
 ### Questions
 1. Write a program that calls `fork()`. Before calling `fork()`, have the main process access a variable (e.g., x) and set its value to something (e.g., 100). What value is the variable in the child process? What happens to the variable when both the child and parent change the value of x?
 
-Before we call the fork() function, X is 1, after fork() is called, both parent and it's child get a copy of x in seperated memory spaces. In this example I set X to 5 and the parent to X = 10, these changes are independent of eachother. Each process can modify their copy of x and would not be visible to each other.
+Before we call the fork() function, X is initialized as 1, after fork() is called, both parent and it's child get a copy of x in seperated memory spaces. In this example X  is set X = 5 and the parent to X = 10, these changes are independent of eachother. Each process can modify their copy of x and would not be visible to each other.
 
 ```cpp
 #include <stdio.h>
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 
 2. Write a program that opens a file (with the `open()` system call) and then calls `fork()` to create a new process. Can both the child and parent access the file descriptor returned by `open()`? What happens when they are writing to the file concurrently, i.e., at the same time?
 
-   File descriptors are actually inherited across the fork() function, that means both the parent and child can write to the file using the same descriptor. That means both the parent and child can access the file. This also means that they can both open at the same time, though it would lead to the writes being interleaved and mixed output in the file.
+   File descriptors are actually inherited across the fork() function, that means both the parent and child can write to the file using the same descriptor. That means both the parent and child can access the file. The parent and child would also share the same file offeset, allowing them to append one after the other write without resetting. This also means that they can both open at the same time, though it would lead to the writes being interleaved and mixed output in the file.
 
 ```cpp
 #include <stdio.h>
@@ -171,7 +171,7 @@ main(int argc, char *argv[])
 
 4. Write a program that calls `fork()` and then calls some form of `exec()` to run the program `/bin/ls`. See if you can try all of the variants of `exec()`, including (on Linux) `execl()`, `execle()`, `execlp()`, `execv()`, `execvp()`, and `execvpe()`. Why do you think there are so many variants of the same basic call?
 
-There are so many variants of the exec call because there are multiple ways to pass the argument. It's for convenience as using the same exec for the many different calls would be messy, seperating it into different variants allows for clean code, as well as convenience and visibility as you know what call is being made.
+There are so many variants of the exec call because there are multiple ways to pass the argument. It's for convenience as using the same exec for the many different calls would be messy, seperating it into different variants allows for clean code, as well as convenience and visibility as you know what call is being made. 
 
 ```cpp
 #include <stdio.h>
@@ -207,7 +207,7 @@ main(int argc, char *argv[])
 
 5. Now write a program that uses `wait()` to wait for the child process to finish in the parent. What does `wait()` return? What happens if you use `wait()` in the child?
 
-wait() stalls or blocks the parent until the child finishes, as a result it will return the PID of the child that exited. Calling wait() in the child would draw an error as the child cannot have a child process of it's own to wait for.
+wait() stalls or blocks the parent until the child finishes, as a result it will return the PID of the child that exited. Calling wait() in the child would draw -1 as the child cannot have a child process of it's own to wait for.
 
 ```cpp
 #include <stdio.h>
@@ -267,7 +267,7 @@ main(int argc, char *argv[])
     } else {
         int status;
         int wc = waitpid(rc, &status, 0);
-        printf("Parent Process waiting (child =%d, wc=%d\n)", rc, wc);
+        printf("Parent Process waiting (child =%d, wc=%d)\n", rc, wc);
     }
 
     return 0;
