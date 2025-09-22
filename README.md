@@ -80,6 +80,9 @@ int main(int argc, char *argv[])
     return 0;
     
 }
+
+Before we call the fork() function, X is 1, after fork() is called, both parent and it's child get a copy of x in seperated memory spaces. In this example I set X to 5 and the parent to X = 10, these changes are independent of eachother. Each process can modify their copy of x and would not be visible to each other.
+
 ```
 
 
